@@ -1,3 +1,19 @@
-<markdown [data]="content">
-  
-</markdown>
+<div class="layout">
+  <aside class="sidebar">
+    <h2 class="logo">Valet Docs</h2>
+    <nav>
+      @for (item of menu; track item.path) {
+        <a (click)="select(item)"
+        [class.active]="currentDoc() === item.path">
+          {{ item.title }}
+        </a>
+      }
+    </nav>
+  </aside>
+
+  <main class="content">
+    <markdown [src]="currentDoc()">
+      Loading...
+    </markdown>
+  </main>
+</div>

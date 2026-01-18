@@ -5,11 +5,24 @@ import { MarkdownComponent } from "ngx-markdown";
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, MarkdownComponent],
+  imports: [MarkdownComponent],
   templateUrl: './app.html',
   styleUrl: './app.scss'
 })
 export class App {
-  protected readonly title = signal('valet.web');
-  content = '```csharp\nConsole.WriteLine("Hello, World!");\n```';
+  menu = [
+    { title: 'Introduction', path: '/docs/introduction.md' },
+    { title: 'Getting Started', path: '/docs/getting-started.md' },
+    { title: 'Configuration', path: '/docs/configuration.md' },
+    { title: 'Core', path: '/docs/core.md' },
+    { title: 'Auth', path: '/docs/auth.md' },
+    { title: 'FAQ', path: '/docs/faq.md' },
+  ];
+
+  currentDoc = signal(this.menu[0].path);
+
+  select(item: any) {
+    this.currentDoc.set(item.path);
+  }
+
 }

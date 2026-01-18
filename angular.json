@@ -6,7 +6,7 @@
   },
   "newProjectRoot": "projects",
   "projects": {
-    "valet.web": {
+    "valet.docs": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
@@ -70,10 +70,10 @@
           "builder": "@angular/build:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "valet.web:build:production"
+              "buildTarget": "valet.docs:build:production"
             },
             "development": {
-              "buildTarget": "valet.web:build:development"
+              "buildTarget": "valet.docs:build:development"
             }
           },
           "defaultConfiguration": "development"
