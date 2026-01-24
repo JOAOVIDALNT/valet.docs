@@ -1,7 +1,19 @@
-import { Component, signal } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+
+import { Component, signal, computed } from '@angular/core';
 import { MarkdownComponent } from "ngx-markdown";
 
+
+// Estrutura de módulos e submódulos
+type Submodule = {
+  name: string;
+  markdown: string;
+};
+
+type Module = {
+  name: string;
+  markdown: string;
+  submodules?: Submodule[];
+};
 @Component({
   selector: 'app-root',
   standalone: true,
@@ -10,19 +22,43 @@ import { MarkdownComponent } from "ngx-markdown";
   styleUrl: './app.scss'
 })
 export class App {
-  menu = [
-    { title: 'Introduction', path: '/docs/introduction.md' },
-    { title: 'Getting Started', path: '/docs/getting-started.md' },
-    { title: 'Configuration', path: '/docs/configuration.md' },
-    { title: 'Core', path: '/docs/core.md' },
-    { title: 'Auth', path: '/docs/auth.md' },
-    { title: 'FAQ', path: '/docs/faq.md' },
+  modules: Module[] = [
+    {
+      name: 'Getting Started',
+      markdown: '/docs/getting-started.md',
+      submodules: [
+        { name: 'Installation', markdown: '/docs/installation.md' },
+      ],
+    },
+    {
+      name: 'Core',
+      markdown: '/docs/core.md',
+    },
+    {
+      name: 'FAQ',
+      markdown: '/docs/faq.md',
+    },
   ];
 
-  currentDoc = signal(this.menu[0].path);
+  selectedModule = signal<Module | null>(this.modules[0]);
+  selectedSubmodule = signal<Submodule | null>(null);
 
-  select(item: any) {
-    this.currentDoc.set(item.path);
+  currentMarkdown = computed(() => {
+    if (this.selectedSubmodule()) {
+      return this.selectedSubmodule()!.markdown;
+    }
+    if (this.selectedModule()) {
+      return this.selectedModule()!.markdown;
+    }
+    return '';
+  });
+
+  selectModule(module: Module) {
+    this.selectedModule.set(module);
+    this.selectedSubmodule.set(null);
   }
 
+  selectSubmodule(sub: Submodule) {
+    this.selectedSubmodule.set(sub);
+  }
 }

@@ -1,3 +1,16 @@
+// Alinha o nome do módulo e a seta
+.module-link {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5em;
+}
+
+.icon-arrow {
+  padding-left: 4px;
+  font-size: 0.9em;
+  color: #aaa;
+}
 .layout {
   display: flex;
   height: 100vh;
@@ -9,6 +22,16 @@
   width: 250px;
   background-color: rgb(0, 0, 82);
   padding: 20px;
+}
+
+h2 {
+  padding: 30px 0;
+  img {
+    display: inline-block;
+    vertical-align: middle;
+    width: 30px;
+    height: 30px;
+  }
 }
 
 nav {
@@ -35,4 +58,21 @@ nav {
   flex: 1;
   padding: 48px;
   overflow-y: auto;
+}
+.submodules {
+  margin-left: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+a.submodule {
+  font-size: 0.95em;
+  color: #888;
+  padding-left: 0.5em;
+}
+
+a.active {
+  font-weight: bold;
+  color: #1976d2;
 }

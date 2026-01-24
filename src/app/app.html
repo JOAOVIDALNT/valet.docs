@@ -1,19 +1,40 @@
 <div class="layout">
   <aside class="sidebar">
-    <h2 class="logo">Valet Docs</h2>
+    <h2 class="logo" style="display: flex; align-items: center; gap: 10px;">
+      <img src="/valet_icon_no_bg.png" alt="Logo"/>
+      Valet Docs
+    </h2>
     <nav>
-      @for (item of menu; track item.path) {
-        <a (click)="select(item)"
-        [class.active]="currentDoc() === item.path">
-          {{ item.title }}
-        </a>
+      @for (mod of modules; track mod.name) {
+        <div>
+          <a (click)="selectModule(mod)"
+             [class.active]="selectedModule() && selectedModule()!.name === mod.name && !selectedSubmodule()"
+             class="module-link">
+            <span>{{ mod.name }}</span>
+            @if (mod.submodules?.length && !(selectedModule() && selectedModule()!.name === mod.name)) {
+              <span class="icon-arrow" aria-hidden="true">
+                <svg width="16" height="16" viewBox="0 0 16 16" style="display:inline;vertical-align:middle;"><path d="M4 6l4 4 4-4" stroke="#aaa" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </span>
+            }
+          </a>
+          @if (mod.submodules?.length && selectedModule() && selectedModule()!.name === mod.name) {
+            <div class="submodules">
+              @for (sub of mod.submodules; track sub.name) {
+                <a class="submodule"
+                   (click)="selectSubmodule(sub)"
+                   [class.active]="selectedSubmodule() && selectedSubmodule()!.name === sub.name">
+                  {{ sub.name }}
+                </a>
+              }
+            </div>
+          }
+        </div>
       }
     </nav>
   </aside>
 
   <main class="content">
-    <markdown [src]="currentDoc()">
-      Loading...
+    <markdown [src]="currentMarkdown()">
     </markdown>
   </main>
 </div>
