@@ -28,6 +28,7 @@ export class App {
       markdown: '/docs/getting-started.md',
       submodules: [
         { name: 'Installation', markdown: '/docs/installation.md' },
+        { name: 'Configuration', markdown: '/docs/configuration.md' },
       ],
     },
     {
