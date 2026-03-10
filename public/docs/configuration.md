@@ -1,24 +1,34 @@
-## Configuration
+## CONFIGURATION  
 
-### Registering Valet
+<br>
 
-Configure Valet in your application startup (e.g. `Program.cs`):
+### Registering Valet  
+
+<br>
+
+Configure Valet in your application startup (e.g. `Program.cs`):  
+
 
 ```csharp
-builder.Services.AddValet<AppDbContext>(builder.Configuration, options =>
+builder.Services.AddValet<MyDbContext>(builder.Configuration, options =>
 {
     options.UseAuth();           // Auth repositories, password hasher, JWT
     options.UseSwaggerGen();     // Swagger with JWT Bearer support
     options.UseAuditing();       // CreatedAt/UpdatedAt via AuditInterceptor
     options.AddUseCasesFrom<SomeUseCase>();  // Register use cases from an assembly
 });
-```
+```  
+<br>
 
 - **`AddValet<TContext>`** — Registers Valet services. `TContext` must inherit from `AuthDbContext`.
 - **`configuration`** — Required when `UseAuth()` is enabled (for JWT settings). Can be `null` otherwise.
-- **`configure`** — Optional delegate to enable features via `ValetOptions`. Only enabled features are registered.
+- **`configure`** — Optional delegate to enable features via `ValetOptions`. Only enabled features are registered.  
 
-### ValetOptions
+<br>
+
+### ValetOptions  
+
+<br>
 
 | Method | Description |
 |--------|-------------|
@@ -27,14 +37,20 @@ builder.Services.AddValet<AppDbContext>(builder.Configuration, options =>
 | `UseAuditing()` | Registers the default `AuditInterceptor` for `IAuditable` entities. |
 | `AddUseCasesFrom<T>()` | Scans the assembly containing `T` for Command/Query use cases and registers them in DI. |
 
+<br>
+
 Omitted options mean the corresponding feature is not registered.
+
+<br>
+<br>
 
 ### DbContext setup
 
-Your context must inherit from `AuthDbContext`:
+<br>
 
+Your context must inherit from `AuthDbContext`:
 ```csharp
-public class AppDbContext(DbContextOptions options) : AuthDbContext(options)
+public class MyDbContext(DbContextOptions options) : AuthDbContext(options)
 {
     public DbSet<Wallet> Wallets { get; set; }
     public DbSet<Transaction> Transactions { get; set; }
@@ -42,20 +58,25 @@ public class AppDbContext(DbContextOptions options) : AuthDbContext(options)
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
-        modelBuilder.ApplyConfigurationsFromAssembly(typeof(AppDbContext).Assembly);
+        modelBuilder.ApplyConfigurationsFromAssembly(typeof(MyDbContext).Assembly);
     }
 }
 ```
 
-Calling `base.OnModelCreating` applies Valet’s entity configurations. Add your own configurations or use `ApplyConfigurationsFromAssembly` for your assembly.
+Calling **base.OnModelCreating** applies Valet’s entity configurations. Add your own configurations or use **ApplyConfigurationsFromAssembly** for your assembly.
+
+<br>
+<br>
 
 ### Enabling auditing on DbContext
 
-When using `UseAuditing()`, add the Valet auditing interceptor to your context options:
+<br>
+
+When using **UseAuditing()**, add the Valet auditing interceptor to your context options:
 
 ```csharp
 // e.g. when building options with AddDbContext
-builder.Services.AddDbContext<AppDbContext>((serviceProvider, options) =>
+builder.Services.AddDbContext<MyDbContext>((serviceProvider, options) =>
 {
     options.UseSqlServer(connectionString)
            .EnableAuditing(serviceProvider);
@@ -64,7 +85,12 @@ builder.Services.AddDbContext<AppDbContext>((serviceProvider, options) =>
 
 `EnableAuditing` applies all registered `IValetAuditInterceptor` instances (including the default `AuditInterceptor` when `UseAuditing()` is used).
 
+<br>
+<br>
+
 ### Extending the User entity
+
+<br>
 
 You can extend `User` for your application:
 
@@ -79,4 +105,4 @@ public class LocalUser : User
 public DbSet<LocalUser> LocalUsers { get; set; }
 ```
 
----
+

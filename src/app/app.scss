@@ -1,4 +1,3 @@
-// Alinha o nome do módulo e a seta
 .module-link {
   display: flex;
   align-items: center;
@@ -53,11 +52,27 @@ nav {
     font-weight: bold;
   }
 }
-
 .content {
   flex: 1;
   padding: 48px;
   overflow-y: auto;
+
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.3) rgb(2, 2, 50);  
+
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+  &::-webkit-scrollbar-track {
+    background: rgb(2, 2, 50);
+  }
+  &::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 4px;
+  }
+  &::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.5);
+  }
 }
 .submodules {
   margin-left: 1.5rem;

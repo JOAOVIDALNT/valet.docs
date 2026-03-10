@@ -1,7 +1,6 @@
 
-import { Component, signal, computed } from '@angular/core';
-import { MarkdownComponent } from "ngx-markdown";
-
+import { Component, signal, computed, inject } from '@angular/core';
+import { MarkdownComponent, MarkdownService } from "ngx-markdown";
 
 // Estrutura de módulos e submódulos
 type Submodule = {
@@ -9,7 +8,7 @@ type Submodule = {
   markdown: string;
 };
 
-type Module = {
+type DocModule = {
   name: string;
   markdown: string;
   submodules?: Submodule[];
@@ -19,10 +18,11 @@ type Module = {
   standalone: true,
   imports: [MarkdownComponent],
   templateUrl: './app.html',
-  styleUrl: './app.scss'
+  styleUrl: './app.scss',
+  preserveWhitespaces: true
 })
 export class App {
-  modules: Module[] = [
+  modules: DocModule[] = [
     {
       name: 'Getting Started',
       markdown: '/docs/getting-started.md',
@@ -41,7 +41,15 @@ export class App {
     },
   ];
 
-  selectedModule = signal<Module | null>(this.modules[0]);
+  markdown = `
+  # Titulo 1
+
+
+  ## Titulo 2 
+  `
+
+
+  selectedModule = signal<DocModule | null>(this.modules[0]);
   selectedSubmodule = signal<Submodule | null>(null);
 
   currentMarkdown = computed(() => {
@@ -54,7 +62,7 @@ export class App {
     return '';
   });
 
-  selectModule(module: Module) {
+  selectModule(module: DocModule) {
     this.selectedModule.set(module);
     this.selectedSubmodule.set(null);
   }
@@ -62,4 +70,5 @@ export class App {
   selectSubmodule(sub: Submodule) {
     this.selectedSubmodule.set(sub);
   }
+
 }
