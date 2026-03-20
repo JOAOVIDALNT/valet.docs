@@ -1,64 +1,87 @@
 ## Core module
+<br>
 
 ### BaseEntity
-
 Base type for entities with a unique identifier:
 
 ```csharp
 public class Wallet : BaseEntity
 {
     public decimal Balance { get; set; }
-    public Guid UserId { get; set; }
+    ...
 }
 ```
 
 - **`Id`** — `Guid`, set automatically (e.g. `Guid.NewGuid()`). No `CreatedAt`/`UpdatedAt` here; use `IAuditable` with auditing if you need them.
+
+<br>
 
 ### IAuditable and auditing
 
 For creation and update timestamps, implement `IAuditable`:
 
 ```csharp
-public interface IAuditable
-{
-    DateTime CreatedAt { get; set; }
-    DateTime UpdatedAt { get; set; }
-}
-
 public class Wallet : BaseEntity, IAuditable
 {
-    public DateTime CreatedAt { get; set; }
-    public DateTime UpdatedAt { get; set; }
     public decimal Balance { get; set; }
+    ...
 }
 ```
 
 When `UseAuditing()` is enabled and the context uses `EnableAuditing(serviceProvider)`, `AuditInterceptor` sets `CreatedAt` and `UpdatedAt` on add/update. Time is provided by `ISystemClock` (default: `SystemClock`).
 
+<br>
+
 ### BaseException and ErrorResponse
 
-**BaseException** is the base for domain exceptions. Subclasses must implement:
+<br>
 
-- `GetErrorMessages()` — list of messages to return to the client.
-- `GetStatusCode()` — HTTP status code for the response.
+**BaseException** is the abstract base for domain exceptions. It now provides:
 
-Built-in types:
+- Multiple constructors: accept a single message, a list of messages, and/or an inner exception for error chaining.
+- Error messages are stored as an `IReadOnlyList<string>` and exposed via `GetErrorMessages()`.
+- Subclasses must implement:
+  - `GetStatusCode()` — HTTP status code for the response.
+  - Optionally override `GetErrorMessages()` if custom logic is needed.
+
+<br>
+
+**Constructors:**
+
+- `BaseException(string message)`
+- `BaseException(string message, Exception innerException)`
+- `BaseException(IEnumerable<string> messages)`
+- `BaseException(IEnumerable<string> messages, Exception innerException)`
+
+<br>
+
+**Built-in types:**
 
 - `UnauthorizedException` — 401.
 - `ForbiddenException` — 403.
 - `ValidationException` — 400, accepts a list of validation messages.
 
-Example:
+<br>
+
+**Example:**
 
 ```csharp
 public class InsufficientFundsException : BaseException
 {
     public InsufficientFundsException() : base("Insufficient funds for this operation.") { }
 
-    public override IList<string> GetErrorMessages() => [Message];
     public override HttpStatusCode GetStatusCode() => HttpStatusCode.Forbidden;
 }
+
+// For multiple messages:
+public class CustomValidationException : BaseException
+{
+    public CustomValidationException(IEnumerable<string> errors) : base(errors) { }
+    public override HttpStatusCode GetStatusCode() => HttpStatusCode.BadRequest;
+}
 ```
+
+<br>
 
 **ErrorResponse** is the standard body for error responses:
 
@@ -77,6 +100,8 @@ if (context.Exception is BaseException baseEx)
 
 For expired tokens you can set `TokenIsExpired = true` on the `ErrorResponse` so clients can handle re-login.
 
+<br>
+
 ### IRepository&lt;T&gt;
 
 Generic interface for data access:
@@ -90,7 +115,7 @@ Generic interface for data access:
 | `Delete(entity)` | Marks the entity for deletion. |
 
 `query` is a `Func<IQueryable<T>, IQueryable<T>>`. Avoid client-side evaluation and early materialization (e.g. `ToList()`) inside it so the query runs on the server.
-
+<br>
 Example:
 
 ```csharp
@@ -104,6 +129,8 @@ public class WalletRepository(AppDbContext db) : Repository<Wallet>(db), IWallet
     public async Task<bool> WalletBelongsToUser(Guid walletId, Guid userId) => ...
 }
 ```
+
+<br>
 
 ### IUnitOfWork
 
@@ -124,13 +151,19 @@ _otherRepo.Update(entity);
 await _uow.CommitAsync();
 ```
 
----
+<br>
+
+<br>
 
 ## Patterns
+
+<br>
 
 ### ISignature
 
 Marker interface for request/signature DTOs used with the signature pattern and use cases. No members.
+
+<br>
 
 ### Signature&lt;TSignature, TValidator&gt;
 
@@ -141,6 +174,7 @@ Base type for validated request objects using FluentValidation:
 
 Call `Validate()` on the instance; it runs the validator and throws `ValidationException` with the validator’s error messages on failure.
 
+<br>
 Example:
 
 ```csharp
@@ -160,7 +194,11 @@ public class CreateWalletRequestValidator : AbstractValidator<CreateWalletReques
 }
 ```
 
+<br>
+
 ### Use cases (Command and Query)
+
+<br>
 
 - **Command&lt;TRequest, TResponse&gt;** — Request implements `ISignature`; returns `TResponse`. For state-changing operations.
 - **Command&lt;TRequest&gt;** — Request implements `ISignature`; no return value.
@@ -169,11 +207,28 @@ public class CreateWalletRequestValidator : AbstractValidator<CreateWalletReques
 
 Implement `Execute`/`Execute(TRequest)` and register via `AddUseCasesFrom<T>()` so Valet discovers and registers them in DI.
 
+<br>
 Example:
 
 ```csharp
+// Query example
 public class GetWalletQuery(Guid walletId) : Query<Wallet?>
 {
     public override async Task<Wallet?> Execute() => await _repo.GetAsync(q => q.Where(w => w.Id == walletId));
+}
+```
+
+```csharp
+// Command example
+public class CreateWalletCommand : Command<CreateWalletSignature, Guid>
+{
+    public override async Task<Guid> Execute(CreateWalletSignature signature)
+    {
+        signature.Validate();
+        var wallet = new Wallet { UserId = signature.UserId, Balance = signature.InitialBalance };
+        await _repo.CreateAsync(wallet);
+        await _uow.SaveChangesAsync();
+        return wallet.Id;
+    }
 }
 ```
