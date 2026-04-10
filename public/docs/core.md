@@ -1,4 +1,4 @@
-## Core module
+## CORE MODULE
 <br>
 
 ### BaseEntity
@@ -146,12 +146,33 @@ Groups changes and persists them in one place. Valet repositories do not call `S
 Example:
 
 ```csharp
-await _repo.CreateAsync(entity);
-_otherRepo.Update(entity);
-await _uow.CommitAsync();
+// Simple example (withouth transaction managment)
+user.AddUserRole(new UserRole(user, role));
+await _userRepository.CreateAsync(user);
+        
+await _unitOfWork.SaveChangesAsync();
 ```
 
-<br>
+```csharp
+// Example with transaction managment
+await unitOfWork.BeginTransactionAsync();
+
+try
+{
+  user.AddUserRole(new UserRole(user, role));
+  await _userRepository.CreateAsync(user);
+  // ... other operations
+
+  await _unitOfWork.CommitAsync();
+}
+catch
+{
+  await _unitOfWork.RollbackAsync();
+  throw;
+}        
+```
+
+
 
 <br>
 
@@ -178,13 +199,13 @@ Call `Validate()` on the instance; it runs the validator and throws `ValidationE
 Example:
 
 ```csharp
-public class CreateWalletRequest : Signature<CreateWalletRequest, CreateWalletRequestValidator>
+public class CreateWalletSignature : Signature<CreateWalletSignature, CreateWalletValidator>
 {
     public decimal InitialBalance { get; set; }
     public Guid UserId { get; set; }
 }
 
-public class CreateWalletRequestValidator : AbstractValidator<CreateWalletRequest>
+public class CreateWalletValidator : AbstractValidator<CreateWalletSignature>
 {
     public CreateWalletRequestValidator()
     {
@@ -200,27 +221,22 @@ public class CreateWalletRequestValidator : AbstractValidator<CreateWalletReques
 
 <br>
 
-- **Command&lt;TRequest, TResponse&gt;** — Request implements `ISignature`; returns `TResponse`. For state-changing operations.
-- **Command&lt;TRequest&gt;** — Request implements `ISignature`; no return value.
-- **Query&lt;TResponse&gt;** — No request; returns `TResponse`. Read-only.
-- **Query&lt;TRequest, TResponse&gt;** — Request implements `ISignature`; returns `TResponse`. Read-only.
+| Use Case Type                | Request Type             | Return Type      | Description                        |
+|------------------------------|-------------------------|------------------|-------------------------------------|
+| `Command<TRequest, TResponse>` | Implements `ISignature` | `TResponse`      | State-changing operation            |
+| `Command<TRequest>`            | Implements `ISignature` | None             | State-changing, no return value     |
+| `Query<TResponse>`             | None                    | `TResponse`      | Read-only, no request               |
+| `Query<TRequest, TResponse>`   | Implements `ISignature` | `TResponse`      | Read-only with request              |
 
-Implement `Execute`/`Execute(TRequest)` and register via `AddUseCasesFrom<T>()` so Valet discovers and registers them in DI.
+Implement Execute/Execute(TRequest) and register any use case with AddUseCasesFrom<T>(), so Valet discovers and registers all others in the same assembly in DI.
 
 <br>
-Example:
 
-```csharp
-// Query example
-public class GetWalletQuery(Guid walletId) : Query<Wallet?>
-{
-    public override async Task<Wallet?> Execute() => await _repo.GetAsync(q => q.Where(w => w.Id == walletId));
-}
-```
+**Examples:**
 
 ```csharp
 // Command example
-public class CreateWalletCommand : Command<CreateWalletSignature, Guid>
+public class CreateWalletUseCase : Command<CreateWalletSignature, Guid>
 {
     public override async Task<Guid> Execute(CreateWalletSignature signature)
     {
@@ -230,5 +246,13 @@ public class CreateWalletCommand : Command<CreateWalletSignature, Guid>
         await _uow.SaveChangesAsync();
         return wallet.Id;
     }
+}
+```
+
+```csharp
+// Query example
+public class GetWalletByIdUseCase : Query<Guid, Wallet?>
+{
+    public override async Task<Wallet?> Execute(Guid walletId) => await _repo.GetAsync(q => q.Where(w => w.Id == walletId));
 }
 ```

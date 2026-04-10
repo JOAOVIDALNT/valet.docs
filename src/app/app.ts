@@ -36,6 +36,14 @@ export class App {
       markdown: '/docs/core.md',
     },
     {
+      name: 'Auth',
+      markdown: '/docs/auth.md',
+    },
+    {
+      name: 'API Reference',
+      markdown: '/docs/api-reference.md',
+    },
+    {
       name: 'FAQ',
       markdown: '/docs/faq.md',
     },
@@ -45,7 +53,7 @@ export class App {
   # Titulo 1
 
 
-  ## Titulo 2 
+  ## Titulo 2
   `
 
 

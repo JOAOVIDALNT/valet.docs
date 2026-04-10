@@ -4,8 +4,6 @@
 
 ### Registering Valet  
 
-<br>
-
 Configure Valet in your application startup (e.g. `Program.cs`):  
 
 
@@ -18,7 +16,6 @@ builder.Services.AddValet<MyDbContext>(builder.Configuration, options =>
     options.AddUseCasesFrom<SomeUseCase>();  // Register use cases from an assembly
 });
 ```  
-<br>
 
 - **`AddValet<TContext>`** — Registers Valet services. `TContext` must inherit from `AuthDbContext`.
 - **`configuration`** — Required when `UseAuth()` is enabled (for JWT settings). Can be `null` otherwise.
@@ -28,7 +25,6 @@ builder.Services.AddValet<MyDbContext>(builder.Configuration, options =>
 
 ### ValetOptions  
 
-<br>
 
 | Method | Description |
 |--------|-------------|
@@ -37,16 +33,12 @@ builder.Services.AddValet<MyDbContext>(builder.Configuration, options =>
 | `UseAuditing()` | Registers the default `AuditInterceptor` for `IAuditable` entities. |
 | `AddUseCasesFrom<T>()` | Scans the assembly containing `T` for Command/Query use cases and registers them in DI. |
 
-<br>
 
 Omitted options mean the corresponding feature is not registered.
 
 <br>
-<br>
 
 ### DbContext setup
-
-<br>
 
 Your context must inherit from `AuthDbContext`:
 ```csharp
@@ -66,11 +58,8 @@ public class MyDbContext(DbContextOptions options) : AuthDbContext(options)
 Calling **base.OnModelCreating** applies Valet’s entity configurations. Add your own configurations or use **ApplyConfigurationsFromAssembly** for your assembly.
 
 <br>
-<br>
 
 ### Enabling auditing on DbContext
-
-<br>
 
 When using **UseAuditing()**, add the Valet auditing interceptor to your context options:
 
@@ -86,12 +75,8 @@ builder.Services.AddDbContext<MyDbContext>((serviceProvider, options) =>
 `EnableAuditing` applies all registered `IValetAuditInterceptor` instances (including the default `AuditInterceptor` when `UseAuditing()` is used).
 
 <br>
-<br>
 
 ### Extending the User entity
-
-<br>
-
 You can extend `User` for your application:
 
 ```csharp
@@ -105,4 +90,28 @@ public class LocalUser : User
 public DbSet<LocalUser> LocalUsers { get; set; }
 ```
 
+<br>
+
+### JWT and appsettings
+
+When `UseAuth()` is enabled, JWT is configured from `IConfiguration`. Use the following keys (e.g. in `appsettings.json`):
+
+```json
+"Settings": {
+  "Jwt": {
+    "Secret": "YOUR_SECRET_KEY",
+    "ExpirationMinutes": 60
+  }
+}
+```
+
+- **Settings:Jwt:Secret** — Signing key for JWT.
+- **Settings:Jwt:ExpirationMinutes** — Token lifetime in minutes.
+
+<br>
+
+### Dependency injection and database commit
+
+- Only features you enable (e.g. `UseAuth()`, `UseSwaggerGen()`, `UseAuditing()`, `AddUseCasesFrom<T>()`) are registered. No implicit registration of unused features.
+- Repositories never call `SaveChanges` themselves. You must call `CommitAsync()` or `SaveChangesAsync()` on `IUnitOfWork` to persist changes. This keeps transaction boundaries under your control.
 
