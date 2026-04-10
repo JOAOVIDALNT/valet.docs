@@ -1,28 +1,82 @@
-import { Component, signal } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
-import { MarkdownComponent } from "ngx-markdown";
 
+import { Component, signal, computed, inject } from '@angular/core';
+import { MarkdownComponent, MarkdownService } from "ngx-markdown";
+
+// Estrutura de módulos e submódulos
+type Submodule = {
+  name: string;
+  markdown: string;
+};
+
+type DocModule = {
+  name: string;
+  markdown: string;
+  submodules?: Submodule[];
+};
 @Component({
   selector: 'app-root',
   standalone: true,
   imports: [MarkdownComponent],
   templateUrl: './app.html',
-  styleUrl: './app.scss'
+  styleUrl: './app.scss',
+  preserveWhitespaces: true
 })
 export class App {
-  menu = [
-    { title: 'Introduction', path: '/docs/introduction.md' },
-    { title: 'Getting Started', path: '/docs/getting-started.md' },
-    { title: 'Configuration', path: '/docs/configuration.md' },
-    { title: 'Core', path: '/docs/core.md' },
-    { title: 'Auth', path: '/docs/auth.md' },
-    { title: 'FAQ', path: '/docs/faq.md' },
+  modules: DocModule[] = [
+    {
+      name: 'Getting Started',
+      markdown: '/docs/getting-started.md',
+      submodules: [
+        { name: 'Installation', markdown: '/docs/installation.md' },
+        { name: 'Configuration', markdown: '/docs/configuration.md' },
+      ],
+    },
+    {
+      name: 'Core',
+      markdown: '/docs/core.md',
+    },
+    {
+      name: 'Auth',
+      markdown: '/docs/auth.md',
+    },
+    {
+      name: 'API Reference',
+      markdown: '/docs/api-reference.md',
+    },
+    {
+      name: 'FAQ',
+      markdown: '/docs/faq.md',
+    },
   ];
 
-  currentDoc = signal(this.menu[0].path);
+  markdown = `
+  # Titulo 1
 
-  select(item: any) {
-    this.currentDoc.set(item.path);
+
+  ## Titulo 2
+  `
+
+
+  selectedModule = signal<DocModule | null>(this.modules[0]);
+  selectedSubmodule = signal<Submodule | null>(null);
+
+  currentMarkdown = computed(() => {
+    if (this.selectedSubmodule()) {
+      return this.selectedSubmodule()!.markdown;
+    }
+    if (this.selectedModule()) {
+      return this.selectedModule()!.markdown;
+    }
+    return '';
+  });
+
+  selectModule(module: DocModule) {
+    this.selectedModule.set(module);
+    this.selectedSubmodule.set(null);
+  }
+
+  selectSubmodule(sub: Submodule) {
+    this.selectedSubmodule.set(sub);
   }
 
 }
