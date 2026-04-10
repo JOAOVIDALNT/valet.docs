@@ -5,3 +5,35 @@
   box-sizing: border-box;
   font-family: 'Inter', Arial, Helvetica, sans-serif;
 }
+
+markdown {
+  line-height: 1.7;
+  code {
+    font-family: monospace;
+    background: #232323;
+    padding: 2px 4px;
+    border-radius: 4px;
+  }
+}
+
+markdown table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1rem 0;
+}
+
+markdown th,
+markdown td {
+  border: 1px solid grey;
+  padding: 8px 12px;
+  text-align: left;
+}
+
+markdown th {
+  // background: #272d7e;
+  font-weight: 600;
+}
+
+// markdown tr:nth-child(even) {
+//   background: #1a1d46;
+// }
