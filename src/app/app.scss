@@ -58,7 +58,7 @@ nav {
   overflow-y: auto;
 
   scrollbar-width: thin;
-  scrollbar-color: rgba(255, 255, 255, 0.3) rgb(2, 2, 50);  
+  scrollbar-color: rgba(255, 255, 255, 0.3) rgb(2, 2, 50);
 
   &::-webkit-scrollbar {
     width: 8px;
@@ -90,4 +90,8 @@ a.submodule {
 a.active {
   font-weight: bold;
   color: #1976d2;
+}
+
+:host ::ng-deep markdown a {
+  color: white;
 }
