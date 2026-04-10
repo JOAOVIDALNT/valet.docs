@@ -1,15 +1,82 @@
-import { Component, signal } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
-import { MarkdownComponent } from "ngx-markdown";
 
+import { Component, signal, computed, inject } from '@angular/core';
+import { MarkdownComponent, MarkdownService } from "ngx-markdown";
+
+// Estrutura de módulos e submódulos
+type Submodule = {
+  name: string;
+  markdown: string;
+};
+
+type DocModule = {
+  name: string;
+  markdown: string;
+  submodules?: Submodule[];
+};
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, MarkdownComponent],
+  imports: [MarkdownComponent],
   templateUrl: './app.html',
-  styleUrl: './app.scss'
+  styleUrl: './app.scss',
+  preserveWhitespaces: true
 })
 export class App {
-  protected readonly title = signal('valet.web');
-  content = '```csharp\nConsole.WriteLine("Hello, World!");\n```';
+  modules: DocModule[] = [
+    {
+      name: 'Getting Started',
+      markdown: '/docs/getting-started.md',
+      submodules: [
+        { name: 'Installation', markdown: '/docs/installation.md' },
+        { name: 'Configuration', markdown: '/docs/configuration.md' },
+      ],
+    },
+    {
+      name: 'Core',
+      markdown: '/docs/core.md',
+    },
+    {
+      name: 'Auth',
+      markdown: '/docs/auth.md',
+    },
+    {
+      name: 'API Reference',
+      markdown: '/docs/api-reference.md',
+    },
+    {
+      name: 'FAQ',
+      markdown: '/docs/faq.md',
+    },
+  ];
+
+  markdown = `
+  # Titulo 1
+
+
+  ## Titulo 2
+  `
+
+
+  selectedModule = signal<DocModule | null>(this.modules[0]);
+  selectedSubmodule = signal<Submodule | null>(null);
+
+  currentMarkdown = computed(() => {
+    if (this.selectedSubmodule()) {
+      return this.selectedSubmodule()!.markdown;
+    }
+    if (this.selectedModule()) {
+      return this.selectedModule()!.markdown;
+    }
+    return '';
+  });
+
+  selectModule(module: DocModule) {
+    this.selectedModule.set(module);
+    this.selectedSubmodule.set(null);
+  }
+
+  selectSubmodule(sub: Submodule) {
+    this.selectedSubmodule.set(sub);
+  }
+
 }

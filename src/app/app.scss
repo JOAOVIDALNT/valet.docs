@@ -1,0 +1,93 @@
+.module-link {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5em;
+}
+
+.icon-arrow {
+  padding-left: 4px;
+  font-size: 0.9em;
+  color: #aaa;
+}
+.layout {
+  display: flex;
+  height: 100vh;
+  background-color: rgb(2, 2, 50);
+  color: white;
+}
+
+.sidebar {
+  width: 250px;
+  background-color: rgb(0, 0, 82);
+  padding: 20px;
+}
+
+h2 {
+  padding: 30px 0;
+  img {
+    display: inline-block;
+    vertical-align: middle;
+    width: 30px;
+    height: 30px;
+  }
+}
+
+nav {
+  a {
+    display: block;
+    padding: 10px 12px;
+    border-radius: 6px;
+    margin-bottom: 4px;
+    cursor: pointer;
+    transition: background 0.2s ease;
+    color: white;
+  }
+  a:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+  }
+  a.active {
+    background-color: #fff;
+    color: rgb(0, 0, 82);
+    font-weight: bold;
+  }
+}
+.content {
+  flex: 1;
+  padding: 48px;
+  overflow-y: auto;
+
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.3) rgb(2, 2, 50);  
+
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+  &::-webkit-scrollbar-track {
+    background: rgb(2, 2, 50);
+  }
+  &::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 4px;
+  }
+  &::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.5);
+  }
+}
+.submodules {
+  margin-left: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+a.submodule {
+  font-size: 0.95em;
+  color: #888;
+  padding-left: 0.5em;
+}
+
+a.active {
+  font-weight: bold;
+  color: #1976d2;
+}
