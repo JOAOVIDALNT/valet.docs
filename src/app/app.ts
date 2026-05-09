@@ -1,6 +1,7 @@
+import { Component, signal, computed, HostListener } from '@angular/core';
+import { MarkdownComponent } from 'ngx-markdown';
 
-import { Component, signal, computed, inject } from '@angular/core';
-import { MarkdownComponent, MarkdownService } from "ngx-markdown";
+const MOBILE_NAV_MAX_WIDTH_PX = 768;
 
 // Estrutura de módulos e submódulos
 type Submodule = {
@@ -60,6 +61,9 @@ export class App {
   selectedModule = signal<DocModule | null>(this.modules[0]);
   selectedSubmodule = signal<Submodule | null>(null);
 
+  /** Sidebar drawer aberto (só relevante em viewport estreita). */
+  navOpen = signal(false);
+
   currentMarkdown = computed(() => {
     if (this.selectedSubmodule()) {
       return this.selectedSubmodule()!.markdown;
@@ -73,10 +77,33 @@ export class App {
   selectModule(module: DocModule) {
     this.selectedModule.set(module);
     this.selectedSubmodule.set(null);
+    this.closeNav();
   }
 
   selectSubmodule(sub: Submodule) {
     this.selectedSubmodule.set(sub);
+    this.closeNav();
   }
 
+  toggleNav() {
+    this.navOpen.update((v) => !v);
+  }
+
+  closeNav() {
+    this.navOpen.set(false);
+  }
+
+  @HostListener('window:resize')
+  onWindowResize() {
+    if (typeof window !== 'undefined' && window.innerWidth > MOBILE_NAV_MAX_WIDTH_PX) {
+      this.navOpen.set(false);
+    }
+  }
+
+  @HostListener('document:keydown.escape')
+  onEscape() {
+    if (this.navOpen()) {
+      this.closeNav();
+    }
+  }
 }
