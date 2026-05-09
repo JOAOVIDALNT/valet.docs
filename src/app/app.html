@@ -4,7 +4,7 @@
       <img src="/valet_icon_no_bg.png" alt="Logo"/>
       Valet Docs
     </h2>
-    <nav>
+    <nav class="sidebar-nav">
       @for (mod of modules; track mod.name) {
         <div>
           <a (click)="selectModule(mod)"
@@ -31,6 +31,56 @@
         </div>
       }
     </nav>
+    <footer class="sidebar-footer">
+      <div class="sidebar-footer-links" role="group" aria-label="Links externos">
+        <a
+          class="sidebar-footer-link"
+          href="https://github.com/JOAOVIDALNT/valet"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Abrir repositório Valet no GitHub em nova guia">
+          <svg class="footer-icon" viewBox="0 0 98 96" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <path fill="currentColor" fill-rule="evenodd" clip-rule="evenodd"
+              d="M48.854 0C21.839 0 0 22 0 49.217c0 21.756 13.993 40.172 33.405 46.69 2.427.49 3.316-1.059 3.316-2.362 0-1.141-.08-5.052-.08-9.127-13.59 2.934-16.42-5.867-16.42-5.867-2.184-5.704-5.42-7.17-5.42-7.17-4.448-3.015.324-3.015.324-3.015 4.934.326 7.523 5.052 7.523 5.052 4.367 7.496 11.404 5.378 14.235 4.074.404-3.178 1.699-5.378 3.074-6.6-10.839-1.141-22.243-5.378-22.243-24.283 0-5.378 1.94-9.778 5.014-13.2-.485-1.222-2.184-6.275.486-13.038 0 0 4.125-1.304 13.426 5.052a46.97 46.97 0 0 1 12.214-1.63c4.125 0 8.33.571 12.213 1.63 9.302-6.356 13.427-5.052 13.427-5.052 2.67 6.763.97 11.816.485 13.038 3.155 3.422 5.015 7.822 5.015 13.2 0 18.905-11.404 23.06-22.324 24.283 1.78 1.548 3.316 4.481 3.316 9.126 0 6.6-.08 11.897-.08 13.526 0 1.304.89 2.853 3.316 2.364 19.412-6.52 33.405-24.935 33.405-46.691C97.707 22 75.788 0 48.854 0z"/>
+          </svg>
+        </a>
+        <a
+          class="sidebar-footer-link nuget-footer-link"
+          href="https://www.nuget.org/packages/valet/"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Abrir pacote Valet no NuGet em nova guia">
+          <!-- Official mark: https://github.com/NuGet/Media/blob/main/Images/MainLogo/Vector/nuget.svg (CC-BY) -->
+          <svg
+            class="footer-icon nuget-logo"
+            viewBox="0 0 512 512"
+            xmlns="http://www.w3.org/2000/svg"
+            aria-hidden="true">
+            <defs>
+              <polygon
+                id="nuget-logo-clip"
+                points="0 46.021103 0 3.7002935 84.6521577 3.7002935 84.6521577 88.3419125 0 88.3419125"></polygon>
+            </defs>
+            <g fill="none" fill-rule="evenodd" stroke="none" stroke-width="1">
+              <g transform="translate(0, 6)">
+                <path
+                  fill="currentColor"
+                  fill-rule="evenodd"
+                  d="M374.424959,454.856991 C327.675805,454.856991 289.772801,416.950177 289.772801,370.196324 C289.772801,323.463635 327.675805,285.535656 374.424959,285.535656 C421.174113,285.535656 459.077116,323.463635 459.077116,370.196324 C459.077116,416.950177 421.174113,454.856991 374.424959,454.856991 M205.565067,260.814741 C176.33891,260.814741 152.657469,237.109754 152.657469,207.901824 C152.657469,178.672728 176.33891,154.988907 205.565067,154.988907 C234.791225,154.988907 258.472666,178.672728 258.472666,207.901824 C258.472666,237.109754 234.791225,260.814741 205.565067,260.814741 M378.170817,95.6417786 L236.886365,95.6417786 C164.889705,95.6417786 106.479717,154.057639 106.479717,226.082702 L106.479717,367.360191 C106.479717,439.40642 164.889705,497.77995 236.886365,497.77995 L378.170817,497.77995 C450.209803,497.77995 508.577466,439.40642 508.577466,367.360191 L508.577466,226.082702 C508.577466,154.057639 450.209803,95.6417786 378.170817,95.6417786"></path>
+                <mask id="nuget-logo-mask" fill="white">
+                  <use href="#nuget-logo-clip"></use>
+                </mask>
+                <path
+                  fill="currentColor"
+                  fill-rule="evenodd"
+                  mask="url(#nuget-logo-mask)"
+                  d="M84.6521577,46.0115787 C84.6521577,69.3990881 65.6900744,88.3419125 42.3260788,88.3419125 C18.9409203,88.3419125 0,69.3990881 0,46.0115787 C0,22.6452344 18.9409203,3.68124485 42.3260788,3.68124485 C65.6900744,3.68124485 84.6521577,22.6452344 84.6521577,46.0115787"></path>
+              </g>
+            </g>
+          </svg>
+        </a>
+      </div>
+    </footer>
   </aside>
 
   <main class="content">
