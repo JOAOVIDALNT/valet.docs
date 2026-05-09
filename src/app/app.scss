@@ -249,6 +249,7 @@ a.active {
 
 @media (max-width: $nav-breakpoint) {
   .layout {
+    --mobile-header-height: 52px;
     flex-direction: column;
   }
 
@@ -258,6 +259,9 @@ a.active {
 
   .mobile-header {
     display: flex;
+    height: var(--mobile-header-height);
+    min-height: var(--mobile-header-height);
+    box-sizing: border-box;
   }
 
   .sidebar-backdrop {
@@ -282,7 +286,8 @@ a.active {
 
   .sidebar {
     position: fixed;
-    top: 0;
+    /* abaixo do header fixo — evita o logo ficar por baixo da barra */
+    top: var(--mobile-header-height);
     left: 0;
     bottom: 0;
     width: min(86vw, 300px);
