@@ -7,7 +7,7 @@
 | `ValetOptions` | Fluent options: `UseAuth`, `UseSwaggerGen`, `UseAuditing`, `AddUseCasesFrom<T>`. |
 | **Core – Domain** | |
 | `BaseEntity` | Base entity with `Id` (Guid). |
-| `IRepository<T>` | Generic repository: GetAllAsync, GetAsync, CreateAsync, Update, Delete. |
+| `IRepository<T>` | Generic repository: GetAllAsync, CountAsync, GetAsync, CreateAsync, Update, Delete (query methods support CancellationToken). |
 | `IUnitOfWork` | BeginTransactionAsync, CommitAsync, RollbackAsync, SaveChangesAsync. |
 | `IAuditable` | CreatedAt, UpdatedAt. |
 | `ISignature` | Marker for request DTOs. |
@@ -18,6 +18,8 @@
 | `UnauthorizedException`, `ForbiddenException`, `ValidationException` | Built-in exceptions. |
 | **Core – Patterns** | |
 | `Signature<TSignature, TValidator>` | Validatable request with FluentValidation; Validate(). |
+| `ICommand<TRequest, TResponse>`, `ICommand<TRequest>` | Command contracts. |
+| `IQuery<TResponse>`, `IQuery<TRequest, TResponse>` | Query contracts. |
 | `Command<TRequest, TResponse>`, `Command<TRequest>` | Command use cases. |
 | `Query<TResponse>`, `Query<TRequest, TResponse>` | Query use cases. |
 | **Auth** | |

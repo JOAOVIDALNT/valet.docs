@@ -108,8 +108,9 @@ Generic interface for data access:
 
 | Method | Description |
 |--------|-------------|
-| `GetAllAsync(query?, pageSize, pageNumber, tracked)` | List of entities. Optional `query` to filter/include/order. `pageSize = 0` disables pagination. |
-| `GetAsync(query?, tracked)` | Single entity or `null`. |
+| `GetAllAsync(query?, pageSize, pageNumber, tracked, cancellationToken)` | List of entities as `IReadOnlyList<T>`. Optional `query` to filter/include/order. `pageSize = 0` disables pagination. |
+| `CountAsync(query?, cancellationToken)` | Count of entities matching an optional query. Useful for pagination metadata. |
+| `GetAsync(query?, tracked, cancellationToken)` | Single entity or `null`. |
 | `CreateAsync(entity)` | Adds the entity. |
 | `Update(entity)` | Marks the entity as modified. |
 | `Delete(entity)` | Marks the entity for deletion. |
@@ -218,6 +219,15 @@ public class CreateWalletValidator : AbstractValidator<CreateWalletSignature>
 <br>
 
 ### Use cases (Command and Query)
+
+Valet now exposes explicit interfaces for use cases:
+
+- `ICommand<TRequest, TResponse>`
+- `ICommand<TRequest>`
+- `IQuery<TResponse>`
+- `IQuery<TRequest, TResponse>`
+
+The abstract base classes (`Command<...>` and `Query<...>`) implement these interfaces, so you can depend directly on interfaces when needed.
 
 <br>
 
