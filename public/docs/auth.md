@@ -22,8 +22,8 @@ Pre-configured context with `DbSet<User>`, `DbSet<Role>`, `DbSet<UserRole>` and 
 
 | Repository            | Methods & Description                                                                                 | Extends                |
 |-----------------------|------------------------------------------------------------------------------------------------------|------------------------|
-| **IUserRepository**   | `UserExistsAsync(string username)`<br>`UserExistsAsync(Guid identifier)`<br>`GetUserWithRolesAsync(string username)` (user with roles loaded) | `IRepository<User>`    |
-| **IRoleRepository**   | `RoleExistsAsync(string name)`<br>`EnsureRoleExistsAsync(string name)` (get or create; tracked)        | `IRepository<Role>`    |
+| **IUserRepository**   | `UserExistsAsync(string username, CancellationToken cancellationToken = default)`<br>`UserExistsAsync(Guid identifier, CancellationToken cancellationToken = default)`<br>`GetUserWithRolesAsync(string username, CancellationToken cancellationToken = default)` (user with roles loaded) | `IRepository<User>`    |
+| **IRoleRepository**   | `RoleExistsAsync(string name)`<br>`EnsureRoleExistsAsync(string name)` (get or create; tracked only, persistence happens when UnitOfWork saves/commits)        | `IRepository<Role>`    |
 | **IUserRoleRepository** | Standard CRUD                                                                                        | `IRepository<UserRole>`|
 
 <br>
@@ -47,7 +47,7 @@ bool valid = _hasher.VerifyPassword("inputPassword", storedHash);
 
 | Interface         | Method & Description                                                                                 |
 |-------------------|-----------------------------------------------------------------------------------------------------|
-| **ITokenGenerator** | `GenerateToken(User user)` — Builds a JWT with user id and role claims (from `User.UserRoles`), signed and with configurable expiration. |
+| **ITokenGenerator** | `GenerateToken(User user)` — Builds a JWT with `sub` (subject = user id) and role claims (from `User.UserRoles`), signed and with configurable expiration. |
 | **ITokenValidator** | `ValidateAndGetUserIdentifier(string token)` — Validates the token and returns the user identifier from claims. |
 
 <br>
@@ -99,4 +99,4 @@ Use on controllers or actions to require a valid JWT and optionally specific rol
 [ValidateUser("admin,manager")]   // Comma-separated roles
 ```
 
-The filter validates the Bearer token, ensures the user exists, and optionally checks that the user has one of the given roles. On expired token it returns 401 with an `ErrorResponse` where `TokenIsExpired` can be set. For `BaseException` it uses `GetStatusCode()` and `GetErrorMessages()` for the response.
+The filter validates the Bearer token, ensures the user exists, and optionally checks that the user has one of the given roles. On expired token it returns 401 with an `ErrorResponse` where `TokenIsExpired` can be set. For `BaseException` it uses `GetStatusCode()` and `GetErrorMessages()` for the response. Unexpected authorization errors are logged before returning 401.
